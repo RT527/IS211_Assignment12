@@ -53,11 +53,42 @@ def dashboard():
     quizzes = db.execute("SELECT * FROM quizzes").fetchall()
     return render_template('dashboard.html', students=students, quizzes=quizzes)
 """---------------------------------------------------------------------------------"""
-# Add Students
-
+@app.route('/student/add', methods=['GET', 'POST']) # Add Students
+@login_required
+def add_student():
+    error = None
+    if request.method == 'POST':
+        first = request.form['first_name']
+        last = request.form['last_name']
+        if not first or not last:
+            error = "All fields required"
+            return render_template('add_student.html', error=error)
+        db = get_db()
+        db.execute("INSERT INTO students (first_name, last_name) VALUES (?, ?)",
+                   (first, last))
+        db.commit()
+        return redirect('/dashboard')
+    return render_template('add_student.html', error=error)
 """---------------------------------------------------------------------------------"""
-# Add Quiz
-
+@app.route('/quiz/add', methods=['GET', 'POST']) # Add Quiz
+@login_required
+def add_quiz():
+    error = None
+    if request.method == 'POST':
+        subject = request.form['subject']
+        num_questions = request.form['num_questions']
+        quiz_date = request.form['quiz_date']
+        if not subject or not num_questions or not quiz_date:
+            error = "All fields required"
+            return render_template('add_quiz.html', error=error)
+        db = get_db()
+        db.execute(
+            "INSERT INTO quizzes (subject, num_questions, quiz_date) VALUES (?, ?, ?)",
+            (subject, num_questions, quiz_date)
+        )
+        db.commit()
+        return redirect('/dashboard')
+    return render_template('add_quiz.html', error=error)
 """---------------------------------------------------------------------------------"""
 # View Student Results
 

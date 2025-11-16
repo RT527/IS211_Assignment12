@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Add Student</h2>
+
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+    First Name: <input name="first_name"><br><br>
+    Last Name: <input name="last_name"><br><br>
+    <button type="submit">Add Student</button>
+</form>
+
+{% endblock %}

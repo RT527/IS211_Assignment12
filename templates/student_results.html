@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Results for {{ student.first_name }} {{ student.last_name }}</h2>
+
+{% if results|length == 0 %}
+<p>No Results</p>
+{% else %}
+<table border="1">
+    <tr>
+        <th>Quiz ID</th><th>Subject</th><th>Date</th><th>Score</th>
+    </tr>
+    {% for r in results %}
+    <tr>
+        <td>{{ r.quiz_id }}</td>
+        <td>{{ r.subject }}</td>
+        <td>{{ r.quiz_date }}</td>
+        <td>{{ r.score }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<a href="/dashboard">Back</a>
+
+{% endblock %}

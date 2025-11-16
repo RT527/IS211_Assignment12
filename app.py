@@ -90,11 +90,43 @@ def add_quiz():
         return redirect('/dashboard')
     return render_template('add_quiz.html', error=error)
 """---------------------------------------------------------------------------------"""
-# View Student Results
-
+@app.route('/student/<int:id>') # View Student Results
+@login_required
+def student_results(id):
+    db = get_db()
+    student = db.execute("SELECT * FROM students WHERE id=?", (id,)).fetchone()
+    results = db.execute("""
+        SELECT results.score, results.quiz_id, quizzes.subject, quizzes.quiz_date
+        FROM results
+        JOIN quizzes ON quizzes.id = results.quiz_id
+        WHERE results.student_id=?
+    """, (id,)).fetchall()
+    return render_template("student_results.html",
+                           student=student,
+                           results=results)
 """---------------------------------------------------------------------------------"""
-# Add Result Score
-
+@app.route('/results/add', methods=['GET', 'POST']) # Add Result Score
+@login_required
+def add_result():
+    db = get_db()
+    students = db.execute("SELECT * FROM students").fetchall()
+    quizzes = db.execute("SELECT * FROM quizzes").fetchall()
+    error = None
+    if request.method == 'POST':
+        student_id = request.form['student_id']
+        quiz_id = request.form['quiz_id']
+        score = request.form['score']
+        if not student_id or not quiz_id or not score:
+            error = "All fields required"
+            return render_template('add_result.html', students=students, quizzes=quizzes, error=error)
+        db.execute("INSERT INTO results (student_id, quiz_id, score) VALUES (?, ?, ?)",
+                   (student_id, quiz_id, score))
+        db.commit()
+        return redirect('/dashboard')
+    return render_template("add_result.html",
+                           students=students,
+                           quizzes=quizzes,
+                           error=error)
 """---------------------------------------------------------------------------------"""
 # Anonymous Quiz Results
 

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Anonymous Results for Quiz: {{ quiz.subject }} ({{ quiz.quiz_date }})</h2>
+
+{% if results|length == 0 %}
+<p>No Results</p>
+{% else %}
+<table border="1">
+    <tr>
+        <th>Student ID</th><th>Score</th>
+    </tr>
+    {% for r in results %}
+    <tr>
+        <td>{{ r.student_id }}</td>
+        <td>{{ r.score }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<a href="/dashboard">Back</a>
+
+{% endblock %}

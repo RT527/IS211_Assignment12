@@ -128,8 +128,18 @@ def add_result():
                            quizzes=quizzes,
                            error=error)
 """---------------------------------------------------------------------------------"""
-# Anonymous Quiz Results
-
+@app.route('/quiz/<int:id>/results/') # Anonymous Quiz Results
+def quiz_results_anon(id):
+    db = get_db()
+    quiz = db.execute("SELECT * FROM quizzes WHERE id=?", (id,)).fetchone()
+    results = db.execute("""
+        SELECT student_id, score 
+        FROM results
+        WHERE quiz_id=?
+    """, (id,)).fetchall()
+    return render_template('quiz_results_anon.html',
+                           quiz=quiz,
+                           results=results)
 """---------------------------------------------------------------------------------"""
 if __name__ == '__main__':
     app.run(debug=True)

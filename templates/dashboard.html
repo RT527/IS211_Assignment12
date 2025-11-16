@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<a href="/logout">Logout</a>
+
+<h2>Students</h2>
+<table border="1">
+    <tr>
+        <th>ID</th><th>Name</th><th>Results</th>
+    </tr>
+    {% for s in students %}
+    <tr>
+        <td>{{ s.id }}</td>
+        <td>{{ s.first_name }} {{ s.last_name }}</td>
+        <td><a href="/student/{{ s.id }}">View Results</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="/student/add">Add Student</a>
+<br><br>
+
+<h2>Quizzes</h2>
+<table border="1">
+    <tr>
+        <th>ID</th><th>Subject</th><th>Questions</th><th>Date</th><th>View (Anon)</th>
+    </tr>
+    {% for q in quizzes %}
+    <tr>
+        <td>{{ q.id }}</td>
+        <td>{{ q.subject }}</td>
+        <td>{{ q.num_questions }}</td>
+        <td>{{ q.quiz_date }}</td>
+        <td><a href="/quiz/{{ q.id }}/results/">Anonymous Results</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="/quiz/add">Add Quiz</a>
+<br><br>
+
+<a href="/results/add">Add Quiz Result</a>
+
+{% endblock %}

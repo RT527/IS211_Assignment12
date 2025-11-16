@@ -1,6 +1,6 @@
 # Rafi Talukder Assignment_12
 import sqlite3
-from flask import Flask, g
+from flask import Flask, render_template, request, redirect, session, g, url_for
 """---------------------------------------------------------------------------------"""
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -18,12 +18,40 @@ def close_db(error):
     if db is not None:
         db.close()
 """---------------------------------------------------------------------------------"""
-# Login
+def login_required(f): # Login
+    def wrapper(*args, **kwargs):
+        if 'logged_in' not in session:
+            return redirect('/login')
+        return f(*args, **kwargs)
+    wrapper.__name__ = f.__name__
+    return wrapper
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == "admin" and password == "password":
+            session['logged_in'] = True
+            return redirect('/dashboard')
+        else:
+            error = "Invalid credentials"
+            return render_template('login.html', error=error)
+    return render_template('login.html', error=error)
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
 """---------------------------------------------------------------------------------"""
-# Dashboard
-
+@app.route('/dashboard') # Dashboard
+@login_required
+def dashboard():
+    db = get_db()
+    students = db.execute("SELECT * FROM students").fetchall()
+    quizzes = db.execute("SELECT * FROM quizzes").fetchall()
+    return render_template('dashboard.html', students=students, quizzes=quizzes)
 """---------------------------------------------------------------------------------"""
 # Add Students
 
